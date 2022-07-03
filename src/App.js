@@ -1,24 +1,33 @@
-import logo from './logo.svg';
+import React,{useState} from 'react';
 import './App.css';
-
+import {  Routes, Route } from "react-router-dom";
+import Navbar from './Navbar';
+import CoinPage from './CoinPage';
+import Home from './Home';
 function App() {
+
+  const [search, setSearch] = useState("");
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <div className='app'>
+      <Navbar/>
+      <Routes>
+        <Route path="/" element={
+        <div>
+          <form className='form'>
+          <input type="text" placeholder="Search a coin" value={search} onChange={handleSearch}/>
+          </form>
+          <Home search={search}/>
+        </div> 
+         }
+         />
+        <Route path="/coin/:id" element={<CoinPage></CoinPage>} />
+      </Routes>
+      </div>
   );
 }
 
