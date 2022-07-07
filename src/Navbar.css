@@ -22,7 +22,7 @@
   cursor: pointer;
 }
 
-.navbar p {
+ p {
   color: black;
   display: flex;
   justify-content: center;
