@@ -1,30 +1,11 @@
-import React,{useState, useEffect} from 'react';
-import "antd/dist/antd.min.css";
-import axios from 'axios';
+import React,{useState, useEffect} from 'react'
 import { Table } from "antd";
+import "antd/dist/antd.min.css";
 import { Link } from "react-router-dom";
-import { CoinListAPI } from './api';
-function Home({search, selectedRows, setSelectedRows}) {
 
-  const [coins, setCoins] = useState([]);
-  const [favorites, setFavorites] = useState(selectedRows);
+function Favorites({search, handleSearch, selectedRows, setSelectedRows}) {
 
-  
-  const getCoins = async () => {
-
-    try {
-    const response = await axios.get(CoinListAPI());
-    const data =  response.data;
-    setCoins(data);
-    } 
-    catch (error){
-      alert("Could not fetch coinListApi data")
-      console.log("CoinListAPI ERROR", error)
-    }
-  }
-  useEffect(() => {
-    getCoins();
-  },[])
+  const [alreadySelectedRows, setAlreadySelectedRows] = useState("Bitcoin");
 
   const columns = [
     {
@@ -51,7 +32,7 @@ function Home({search, selectedRows, setSelectedRows}) {
       },
       render: (text, coin) => {
         return <Link to={`/coin/${coin.id}`}>{text}</Link>
-      },
+      }
     },
     {
       title: "Symbol",
@@ -103,10 +84,10 @@ function Home({search, selectedRows, setSelectedRows}) {
       }
     },
   ];
-      
+
   let filteredCoins = []
 
-  for(const coin of coins) {
+  for(const coin of selectedRows) {
     let symbol = coin.symbol.toLowerCase();
     let name = coin.name.toLowerCase();
     if(symbol.match(search.toLowerCase()) || name.match(search.toLowerCase())) {
@@ -114,31 +95,35 @@ function Home({search, selectedRows, setSelectedRows}) {
     }
   }
 
+  useEffect(() => {
+    window.localStorage.getItem("favorites") ? setSelectedRows(JSON.parse(window.localStorage.getItem("favorites"))) : setSelectedRows([])
+  }, []);
+
   return (
     <div>
-    <Table 
-      columns={columns} 
-      dataSource={filteredCoins}
-      rowKey="id"  
-      rowSelection={{
-        onSelect: (record) => {
-          setFavorites([...favorites, record])
-          // window.localStorage.setItem("favorites", JSON.stringify(selectedRows));
-          console.log("favorites", favorites)
-          console.log("selectedRows", selectedRows)
-          // console.log("SelectedsetSelectedRows",SelectedsetSelectedRows)
-        },
-        onChange: (selectedRowKeys, selectedRows) => {
-          setSelectedRows(selectedRows)
-          window.localStorage.setItem("favorites", JSON.stringify(selectedRows));
-          console.log("selectedRowKeys",selectedRowKeys)
-          console.log("selectedRows",selectedRows)
-        },
-        hideSelectAll: true,
-      }}
-    >
-    </Table> 
+       <form className='form'>
+          <input type="text" placeholder="Search a Favorite Coin" value={search} onChange={handleSearch}/>
+        </form>
+        <Table 
+          columns={columns}
+          dataSource={filteredCoins}
+          rowKey="id"  
+          rowSelection={{
+            defaultSelectedRowKeys: alreadySelectedRows,
+            onChange: (keys) => {
+              setAlreadySelectedRows(keys)
+            },
+            hideSelectAll: true,
+          }}
+        >
+        </Table>
+      {/* {selectedRows.map(coin => {
+        return (
+          <h1>{coin.id}</h1>
+        )
+      })} */}
     </div>
   )
 }
-export default Home
+
+export default Favorites
