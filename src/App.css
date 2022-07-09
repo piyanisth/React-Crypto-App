@@ -34,13 +34,13 @@ button {
   width: 115px;
 }
 
- p {
+ button p {
   color: black;
   margin-bottom: 0px;
   font-size: 16px;
 }
 
-svg {
+button svg {
   display: flex;
   margin-right: 5px;
   height: 20px;
